@@ -3,10 +3,16 @@ Class {
 	#superclass : #SBObject,
 	#instVars : [
 		'entries',
-		'users'
+		'users',
+		'allRules'
 	],
 	#category : #Sobot
 }
+
+{ #category : #accessing }
+SBModel >> allRules [
+	^ (entries collect: #commonRule) asSet asSortedCollection
+]
 
 { #category : #building }
 SBModel >> build [
@@ -17,7 +23,18 @@ SBModel >> build [
 	
 	entries do: [ :e |
 		u := (self getUserFromId: e user).
+		u model: self.
 		u addEntry: e ]
+]
+
+{ #category : #accessing }
+SBModel >> colorForRule: r [
+
+	| ar colors |
+	ar := self allRules.
+
+	colors := NSScale ordinalColored: 3.	
+	^ colors scale: r
 ]
 
 { #category : #'as yet unclassified' }
