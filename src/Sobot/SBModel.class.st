@@ -31,7 +31,10 @@ SBModel >> importContent: aString [
 	| lines |
 	lines := aString lines.
 	lines do: [ :l | 
-		entries add: (SBEntry fromLine: l) ]
+		(l beginsWith: ',id,user,commit,task,f') not ifTrue: [ 
+			| e |
+			e := SBEntry fromLine: l.
+			e ifNotNil: [ entries add: e ] ] ]
 ]
 
 { #category : #initialization }

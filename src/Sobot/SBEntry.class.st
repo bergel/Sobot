@@ -30,6 +30,8 @@ SBEntry class >> fromLine: aLine [
 	result task: ss fifth.
 	result filePath: ss sixth.
 	result line: ss seventh asInteger.
+	result line ifNil: [ ^ nil ].
+	
 	result commonRule: (ss at: 8).
 	result time: (ss at: 9) asInteger.
 	result clear: (ss at: 10) asInteger.

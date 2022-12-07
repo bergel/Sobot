@@ -13,6 +13,11 @@ SBUser >> addEntry: anEntry [
 	entries add: anEntry
 ]
 
+{ #category : #enumerating }
+SBUser >> allFiles [
+	^ (self entries collect: #filePath) removeDuplicates
+]
+
 { #category : #accessing }
 SBUser >> entries [
 
@@ -23,6 +28,11 @@ SBUser >> entries [
 SBUser >> entries: anObject [
 
 	entries := anObject
+]
+
+{ #category : #'as yet unclassified' }
+SBUser >> entriesForFile: aFileName [
+	^ entries select: [ :e | e filePath = aFileName ]
 ]
 
 { #category : #accessing }
@@ -54,4 +64,27 @@ SBUser >> printOn: str [
 	str nextPut: $<.
 	id ifNotNil: [ str nextPutAll: id asString ].
 	str nextPut: $>.
+]
+
+{ #category : #'as yet unclassified' }
+SBUser >> visualizeFiles [
+
+	| c pX line es |
+	"Visualize File"
+	c := RSCanvas new.
+
+	self allFiles doWithIndex: [ :fileName :index |
+		pX := 50 * index.
+		line := RSLine new from: pX @ 0; to: pX @ 500; model: fileName; width: 3.
+		line @ RSPopup.
+		c add: line.
+		
+		es := self entriesForFile: fileName.
+		self halt.
+	].
+	^ c @ RSCanvasController
+]
+
+{ #category : #'as yet unclassified' }
+SBUser >> visualizeTime [
 ]

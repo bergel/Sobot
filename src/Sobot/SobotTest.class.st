@@ -70,15 +70,18 @@ SobotTest >> testEmptyModel [
 { #category : #tests }
 SobotTest >> testSimpleModel [
 
-	| m |
+	| m user0 |
 	m := SBModel new.
 	m importContent: self simpleData.
-	self assert: m numberOfEntries equals: self simpleData lines size.
+	self assert: m numberOfEntries equals: 19.
 	
 	m build.
-	self assert: m users size equals: 5.
+	self assert: m users size equals: 3.
 	self assert: (m getUserFromId: 0) numberOfEntries equals: 12.
-	self assert: (m getUserFromId: 1) numberOfEntries equals: 3.
-	self assert: (m getUserFromId: 2) numberOfEntries equals: 4.
-	self assert: (m getUserFromId: 4) numberOfEntries equals: 7.
+	"self assert: (m getUserFromId: 1) numberOfEntries equals: 3."
+	self assert: (m getUserFromId: 2) numberOfEntries equals: 2.
+	self assert: (m getUserFromId: 4) numberOfEntries equals: 5.
+	
+	user0 := m getUserFromId: 0.
+	self assert: user0 allFiles size equals: 2
 ]
