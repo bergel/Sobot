@@ -83,5 +83,6 @@ SobotTest >> testSimpleModel [
 	self assert: (m getUserFromId: 4) numberOfEntries equals: 5.
 	
 	user0 := m getUserFromId: 0.
+	self assert: user0 allFilePath size equals: 2.
 	self assert: user0 allFiles size equals: 2
 ]

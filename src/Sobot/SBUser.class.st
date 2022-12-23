@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'model',
 		'id',
-		'entries'
+		'entries',
+		'files'
 	],
 	#category : #Sobot
 }
@@ -12,6 +13,11 @@ Class {
 { #category : #adding }
 SBUser >> addEntry: anEntry [
 	entries add: anEntry
+]
+
+{ #category : #enumerating }
+SBUser >> allFilePath [
+	^ (self entries collect: #filePath) removeDuplicates sorted
 ]
 
 { #category : #enumerating }
@@ -31,7 +37,7 @@ SBUser >> entries: anObject [
 	entries := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SBUser >> entriesForFile: aFileName [
 	^ entries select: [ :e | e filePath = aFileName ]
 ]
@@ -54,13 +60,32 @@ SBUser >> initialize [
 	entries := OrderedCollection new
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #visualizations }
 SBUser >> inspectorVisualizeFiles [
 	<inspectorPresentationOrder: 90 title: 'Files'>
 
 	^ SpRoassal3InspectorPresenter new
 		canvas: self visualizeFiles;
 		yourself
+]
+
+{ #category : #visualizations }
+SBUser >> inspectorVisualizeTime [
+	<inspectorPresentationOrder: 90 title: 'Time'>
+
+	^ SpRoassal3InspectorPresenter new
+		canvas: self visualizeTime;
+		yourself
+]
+
+{ #category : #visualizations }
+SBUser >> maximumTime [
+	^ (self entries collect: #time) max
+]
+
+{ #category : #visualizations }
+SBUser >> minimumTime [
+	^ (self entries collect: #time) min
 ]
 
 { #category : #accessing }
@@ -75,7 +100,7 @@ SBUser >> model: anObject [
 	model := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #visualizations }
 SBUser >> numberOfEntries [
 	^ entries size
 ]
@@ -88,7 +113,7 @@ SBUser >> printOn: str [
 	str nextPut: $>.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #visualizations }
 SBUser >> visualizeFiles [
 
 	| c pX line es ee label |
@@ -120,6 +145,36 @@ SBUser >> visualizeFiles [
 	^ c @ RSCanvasController
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #visualizations }
 SBUser >> visualizeTime [
+
+	| c line label pY es s ee |
+	"Visualize File"
+	c := RSCanvas new.
+
+	self allFiles doWithIndex: [ :fileName :index |
+		pY := 50 * index.
+		line := RSLine new from: 0 @ pY; to: 500 @ pY; model: fileName; width: 3.
+		line @ RSPopup.
+		c add: line.
+		
+		label := RSLabel new text: (fileName substrings: '/.') second.
+		c add: label.
+		label translateBottomLeftTo: 510 @ (pY + 5).
+		
+		es := (self entriesForFile: fileName).
+		s := NSScale linear.
+		s range: { 0 . 500 }.
+		s domain: { self minimumTime . self maximumTime }.
+		
+		es do: [ :e |
+			| color |
+			color := Color blue alpha: 0.3.
+			
+			ee := RSCircle new size: 10; color: color; model: e.
+			c add: ee.
+			ee translateTo: (s scale: e time) asInteger @ pY
+		].
+	].
+	^ c @ RSCanvasController
 ]

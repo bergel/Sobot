@@ -16,6 +16,17 @@ SBExample >> run [
 ]
 
 { #category : #running }
+SBExample >> runLargeNew [
+	<script: 'self new run inspect'>
+	| filePath m |
+	filePath := '/Users/alexandrebergel/Downloads/ANONminedViolations2212Clean.csv'.
+	m := SBModel new.
+	m importContent: filePath asFileReference contents.
+	m build.
+	^ m
+]
+
+{ #category : #running }
 SBExample >> runSmall [
 	<script: 'self new run inspect'>
 	| m |
